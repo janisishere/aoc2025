@@ -4101,27 +4101,28 @@ L35
 ]]
 
 local zeros = 0
-local index = 0
-local split = assignment:split("\n")
+local index = 50 -- starts at 50
+local split = string.split(assignment, "\n")
 
-for i, x in split do
-   local subtract = x:split("")[1] == "L" and true or false
-   local nmb = x:gsub("/[LR]/", "")
-   if subtract then
-       index -= nmb
-   else
-       index += nmb
-   end
-   
-   if index > 99 then
-      index = index - 99 
-   end
-   if index < 0 then
-      index = 99 - index 
-   end
-   if index == 0 then
-      zeros += 1 
-   end
+for i, x in ipairs(split) do
+	if type(x) == "string" and x ~= "" then
+		local subtract = x:sub(1,1) == "L"
+		local gsubbedNumber = string.gsub(x, "[LR]", "")
+		local nmb = tonumber(gsubbedNumber)
+
+		if subtract then
+			index = index - nmb
+		else
+			index = index + nmb
+		end
+		
+		-- stay between 0-99
+		index = (index + 100) % 100
+
+		if index == 0 then
+			zeros = zeros + 1
+		end
+	end
 end
 
 print(zeros)
